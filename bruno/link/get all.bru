@@ -1,0 +1,15 @@
+meta {
+  name: get all
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/link/list
+  body: none
+  auth: none
+}
+
+headers {
+  authorization: Bearer {{token}}
+}

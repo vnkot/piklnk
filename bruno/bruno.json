@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "short-link",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

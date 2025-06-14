@@ -1,0 +1,21 @@
+meta {
+  name: create link
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/link/create
+  body: json
+  auth: none
+}
+
+headers {
+  authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "url": "https://piklnk.ru"
+  }
+}

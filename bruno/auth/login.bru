@@ -1,0 +1,37 @@
+meta {
+  name: login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "piklnk@mail.ru",
+    "password": "piklnk"
+  }
+}
+
+script:post-response {
+  function onResponse(res) {
+    let body = res.getBody();
+    console.log("Raw response body:", body); // Смотрим исходный ответ
+    
+    let json = typeof body === "string" ? JSON.parse(body) : body;
+    
+    if (!json.token) {
+      throw new Error("Токен не найден в ответе. Проверьте структуру JSON: " + JSON.stringify(json));
+    }
+    
+    let token = json.token;
+    bru.setEnvVar("token", token);
+    console.log("Токен успешно сохранён:", token);
+  }
+  
+  onResponse(res);
+}

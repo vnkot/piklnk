@@ -1,0 +1,22 @@
+meta {
+  name: update link
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/link/update/29
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{token}}
+}
+
+body:json {
+  {
+    "url": "https://piklnk.su",
+    "hash": "gagarin"
+  }
+}

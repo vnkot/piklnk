@@ -1,0 +1,21 @@
+meta {
+  name: get stat by id link
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/stat/group/32?from=2023-01-01&to=2025-12-31&by=month
+  body: none
+  auth: inherit
+}
+
+params:query {
+  from: 2023-01-01
+  to: 2025-12-31
+  by: month
+}
+
+headers {
+  authorization: Bearer {{token}}
+}

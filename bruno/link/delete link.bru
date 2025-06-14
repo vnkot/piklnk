@@ -1,0 +1,15 @@
+meta {
+  name: delete link
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/link/delete/31
+  body: none
+  auth: none
+}
+
+headers {
+  authorization: Bearer {{token}}
+}
