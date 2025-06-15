@@ -1,36 +1,26 @@
-# ===== Переменные =====
-BACKEND_DIR     = backend
-DB_COMPOSE      = services/db/postgresql/docker-compose.yml
-MIGRATIONS_PATH = migrations/auto.go
-APP_ENTRYPOINT  = ./cmd/main.go
-
-# ===== Цели по умолчанию =====
-.DEFAULT_GOAL := help
-
-# ===== Help =====
-help:
-	@echo "Доступные команды:"
-	@echo "  init-env       - Создать симлинк .env в backend"
-	@echo "  db-up          - Запустить PostgreSQL в Docker"
-	@echo "  db-down        - Остановить PostgreSQL"
-	@echo "  db-migrate     - Применить миграции БД"
-	@echo "  run-dev        - Запустить сервер в режиме разработки"
-
-# ===== Инициализация окружения =====
+# ===== Инициализация окружения (копирование файла) =====
 init-env:
-	@ln -sf ../.env $(BACKEND_DIR)/.env || true
-	@echo "Симлинк создан: $(BACKEND_DIR)/.env -> ../.env"
+	@cp .env ./backend/.env || true
+	@echo "Файл скопирован: .env -> ./backend/.env"
 
-# ===== Управление Базой Данных =====
+# ===== Локальная БД =====
 db-up:
-	docker-compose -f $(DB_COMPOSE) up -d
+	@$(MAKE) -C backend db-up
 
 db-down:
-	docker-compose -f $(DB_COMPOSE) down
+	@$(MAKE) -C backend db-down
 
+# ===== БД =====
 db-migrate:
-	cd $(BACKEND_DIR) && go run $(MIGRATIONS_PATH)
+	@$(MAKE) -C backend db-migrate
 
-# ===== Запуск сервера =====
-run-dev:
-	cd $(BACKEND_DIR) && go run $(APP_ENTRYPOINT)
+# ===== Локальная разработка =====
+run-server-dev:
+	@$(MAKE) -C backend run-server-dev
+
+# ===== Продакшен =====
+run-server-prod:
+	@$(MAKE) -C backend run-server-prod
+
+down-server-prod:
+	@$(MAKE) -C backend down-server-prod
