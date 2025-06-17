@@ -15,8 +15,6 @@ localhost {
 }
 
 piklnk.ru {
-    tls internal
-    
     handle /styles/* {
         rewrite /styles/{path} /{path}
         reverse_proxy http://host.docker.internal:3000 {
