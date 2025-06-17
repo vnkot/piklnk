@@ -8,6 +8,7 @@
 - backend: go rest-api сервер, реализующий основную логику сервиса
 - frontend/entry: стартовая страница (на текущий момент заглушка), отвечающая за быстрое создание короткой ссылки
 - bruno: готовые запросы для тестирования API
+- services/proxy: разводит запросы вида `/` на frontend/entry и `/*` на backend
 
 ## Разработка
 ### Сервер
@@ -45,4 +46,10 @@ make  ENV=dev run-server
 Здесь всё просто:
 ```bash
 make  ENV=dev run-entry
+```
+
+### Proxy
+А это прям совсем легко
+```bash
+make run-proxy
 ```

@@ -1,6 +1,7 @@
 # ===== Конфигурация =====
 BACKEND_DIR := backend
 FRONTEND_ENTRY_DIR := frontend/entry
+PROXY_DIR := services/proxy
 
 # ===== Валидация окружения =====
 check-env:
@@ -58,6 +59,13 @@ ifeq ($(ENV),dev)
 else ifeq ($(ENV),prod)
 	@$(MAKE) -C $(FRONTEND_ENTRY_DIR) down-entry-prod
 endif
+
+# ===== Прокси =====
+run-proxy:
+	docker compose -f $(PROXY_DIR)/docker-compose.yml up -d --build
+
+down-proxy:
+	docker compose -f $(PROXY_DIR)/docker-compose.yml down
 
 # ===== Утилиты =====
 clean:
