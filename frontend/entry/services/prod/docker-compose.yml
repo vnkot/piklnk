@@ -1,0 +1,9 @@
+services:
+  static-site:
+    image: caddy:2.7-alpine
+    volumes:
+      - ../../:/usr/share/caddy:ro
+    ports:
+      - "3000:3000"
+    command: caddy file-server --root /usr/share/caddy --listen :3000
+    restart: unless-stopped

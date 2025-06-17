@@ -1,0 +1,10 @@
+services:
+  static-site:
+    image: node:20-bookworm
+    working_dir: /app
+    volumes:
+      - ../../:/app
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "npm install -g live-server &&  live-server --port=3000 --host=0.0.0.0 --watch=/app"

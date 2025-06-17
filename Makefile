@@ -1,26 +1,65 @@
-# ===== Инициализация окружения (копирование файла) =====
-init-env:
-	@cp .env ./backend/.env || true
-	@echo "Файл скопирован: .env -> ./backend/.env"
+# ===== Конфигурация =====
+BACKEND_DIR := backend
+FRONTEND_ENTRY_DIR := frontend/entry
 
-# ===== Локальная БД =====
+# ===== Валидация окружения =====
+check-env:
+ifndef ENV
+	$(error ENV не определен. Используйте ENV=dev или ENV=prod)
+endif
+
+# ===== Инициализация проекта =====
+init-env:
+	@if [ -f .env ]; then \
+		cp .env $(BACKEND_DIR)/.env && \
+		echo "Файл .env скопирован в $(BACKEND_DIR)/"; \
+	else \
+		echo "Предупреждение: .env файл не найден в корне проекта"; \
+	fi
+
+# ===== Управление базой данных =====
 db-up:
-	@$(MAKE) -C backend db-up
+	@$(MAKE) -C $(BACKEND_DIR) db-up
 
 db-down:
-	@$(MAKE) -C backend db-down
+	@$(MAKE) -C $(BACKEND_DIR) db-down
 
-# ===== БД =====
 db-migrate:
-	@$(MAKE) -C backend db-migrate
+	@$(MAKE) -C $(BACKEND_DIR) db-migrate
 
-# ===== Локальная разработка =====
-run-server-dev:
-	@$(MAKE) -C backend run-server-dev
+# ===== Бэкенд сервер =====
+run-server: check-env
+ifeq ($(ENV),dev)
+	@$(MAKE) -C $(BACKEND_DIR) run-server-dev
+else ifeq ($(ENV),prod)
+	@$(MAKE) -C $(BACKEND_DIR) run-server-prod
+else
+	$(error Недопустимое значение ENV: $(ENV). Используйте dev или prod)
+endif
 
-# ===== Продакшен =====
-run-server-prod:
-	@$(MAKE) -C backend run-server-prod
+down-server: check-env
+ifeq ($(ENV),prod)
+	@$(MAKE) -C $(BACKEND_DIR) down-server-prod
+else
+	@echo "Предупреждение: down-server поддерживается только для prod окружения"
+endif
 
-down-server-prod:
-	@$(MAKE) -C backend down-server-prod
+# ===== Фронтенд (entry) =====
+run-entry: check-env
+ifeq ($(ENV),dev)
+	@$(MAKE) -C $(FRONTEND_ENTRY_DIR) run-entry-dev
+else ifeq ($(ENV),prod)
+	@$(MAKE) -C $(FRONTEND_ENTRY_DIR) run-entry-prod
+endif
+
+down-entry: check-env
+ifeq ($(ENV),dev)
+	@$(MAKE) -C $(FRONTEND_ENTRY_DIR) down-entry-dev
+else ifeq ($(ENV),prod)
+	@$(MAKE) -C $(FRONTEND_ENTRY_DIR) down-entry-prod
+endif
+
+# ===== Утилиты =====
+clean:
+	@docker system prune -f
+	@echo "Система очищена"
