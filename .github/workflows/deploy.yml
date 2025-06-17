@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: false
+        default: 'production'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd ./piklnk
+
+            ENV=prod make down-server
+            ENV=prod make down-entry
+            make down-proxy
+            
+            git restore .
+            git pull
+
+            echo "SECRET= ${{ secrets.BACKEND_SECRET }}" > .env
+            echo "DSN= ${{ secrets.BACKEND_DSN }}" >> .env
+
+            make init-env
+            make db-migrate
+
+            ENV=prod make run-server
+            ENV=prod make run-entry
+            make run-proxy
