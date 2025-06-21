@@ -5,10 +5,11 @@ import (
 	"net/http"
 
 	"github.com/vnkot/piklnk/configs"
-	"github.com/vnkot/piklnk/internal/auth"
+	"github.com/vnkot/piklnk/internal/auth/handler"
+	"github.com/vnkot/piklnk/internal/auth/repository"
+	"github.com/vnkot/piklnk/internal/auth/service"
 	"github.com/vnkot/piklnk/internal/link"
 	"github.com/vnkot/piklnk/internal/stat"
-	"github.com/vnkot/piklnk/internal/user"
 	"github.com/vnkot/piklnk/pkg/db"
 	"github.com/vnkot/piklnk/pkg/event"
 	"github.com/vnkot/piklnk/pkg/middleware"
@@ -22,10 +23,10 @@ func main() {
 	eventBus := event.NewEventBus()
 
 	linkRepository := link.NewLinkRepository(db)
-	userRepository := user.NewUserRepository(db)
+	userRepository := repository.NewUserRepository(db)
 	statRepository := stat.NewStatRepository(db)
 
-	authService := auth.NewAuthService(userRepository)
+	authService := service.NewAuthService(userRepository)
 	linkService := link.NewLinkService(&link.LinkServiceDeps{
 		LinkRepository: linkRepository,
 	})
@@ -34,7 +35,7 @@ func main() {
 		StatRepository: statRepository,
 	})
 
-	auth.NewAuthHandler(router, auth.AuthHandlerDeps{
+	handler.NewAuthHandler(router, handler.AuthHandlerDeps{
 		Config:      conf,
 		AuthService: authService,
 	})

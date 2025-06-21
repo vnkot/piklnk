@@ -1,4 +1,4 @@
-package auth
+package handler
 
 import (
 	"net/http"
@@ -10,13 +10,18 @@ import (
 	"github.com/vnkot/piklnk/pkg/res"
 )
 
+type AuthService interface {
+	Login(email, password string) (uint, error)
+	Register(email, password, name string) (uint, error)
+}
+
 type AuthHandlerDeps struct {
-	*AuthService
+	AuthService AuthService
 	*configs.Config
 }
 
 type AuthHandler struct {
-	*AuthService
+	AuthService AuthService
 	*configs.Config
 }
 
@@ -35,19 +40,19 @@ func (handler *AuthHandler) Login() http.HandlerFunc {
 		body, err := req.HandleBody[LoginRequest](&w, r)
 
 		if err != nil {
-			res.Json(w, apierr.New(http.StatusText(http.StatusBadRequest), http.StatusBadRequest, ""), http.StatusBadRequest)
+			res.Json(w, apierr.New(ErrInvalidRequestBody, http.StatusBadRequest, ""), http.StatusBadRequest)
 			return
 		}
 
 		userID, err := handler.AuthService.Login(body.Email, body.Password)
 		if err != nil {
-			res.Json(w, apierr.New(http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized, ""), http.StatusUnauthorized)
+			res.Json(w, apierr.New(ErrIncorrectСredentials, http.StatusUnauthorized, ""), http.StatusUnauthorized)
 			return
 		}
 
-		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{UserID: *userID})
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{UserID: userID})
 		if err != nil {
-			res.Json(w, apierr.New(http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError, ""), http.StatusInternalServerError)
+			res.Json(w, apierr.New(ErrInternalServer, http.StatusInternalServerError, ""), http.StatusInternalServerError)
 			return
 		}
 
@@ -68,11 +73,11 @@ func (handler *AuthHandler) Register() http.HandlerFunc {
 
 		userID, err := handler.AuthService.Register(body.Email, body.Password, body.Name)
 		if err != nil {
-			res.Json(w, apierr.New(http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized, ""), http.StatusUnauthorized)
+			res.Json(w, apierr.New(ErrIncorrectСredentials, http.StatusUnauthorized, ""), http.StatusUnauthorized)
 			return
 		}
 
-		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{UserID: *userID})
+		token, err := jwt.NewJWT(handler.Config.Auth.Secret).Create(jwt.JWTData{UserID: userID})
 		if err != nil {
 			res.Json(w, apierr.New(http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError, ""), http.StatusInternalServerError)
 			return

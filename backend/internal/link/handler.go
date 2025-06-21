@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/vnkot/piklnk/configs"
-	"github.com/vnkot/piklnk/internal/user"
+	"github.com/vnkot/piklnk/internal/auth/repository"
 	"github.com/vnkot/piklnk/pkg/apierr"
 	"github.com/vnkot/piklnk/pkg/event"
 	"github.com/vnkot/piklnk/pkg/jwt"
@@ -20,14 +20,14 @@ type LinkHandlerDeps struct {
 	Config         *configs.Config
 	LinkService    *LinkService
 	LinkRepository *LinkRepository
-	UserRepository *user.UserRepository
+	UserRepository *repository.UserRepository
 }
 
 type LinkHandler struct {
 	EventBus       *event.EventBus
 	LinkService    *LinkService
 	LinkRepository *LinkRepository
-	UserRepository *user.UserRepository
+	UserRepository *repository.UserRepository
 }
 
 func NewLinkHandler(router *http.ServeMux, deps LinkHandlerDeps) {

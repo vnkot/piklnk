@@ -1,4 +1,4 @@
-package auth
+package handler
 
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
@@ -18,3 +18,9 @@ type RegisterRequest struct {
 type RegisterResponse struct {
 	Token string `json:"token"`
 }
+
+const (
+	ErrInternalServer       = "Internal server error"
+	ErrInvalidRequestBody   = "Invalid request body"
+	ErrIncorrectСredentials = "Incorrect credentials"
+)
