@@ -1,5 +1,6 @@
 # ===== Конфигурация =====
 BACKEND_DIR := backend
+TGBOT_DIR := tgbot
 FRONTEND_ENTRY_DIR := frontend/entry
 PROXY_DIR := services/proxy
 
@@ -13,7 +14,8 @@ endif
 init-env:
 	@if [ -f .env ]; then \
 		cp .env $(BACKEND_DIR)/.env && \
-		echo "Файл .env скопирован в $(BACKEND_DIR)/"; \
+		cp .env $(TGBOT_DIR)/.env && \
+		echo "Файл .env скопирован в $(BACKEND_DIR)/ и в ${TGBOT_DIR}/"; \
 	else \
 		echo "Предупреждение: .env файл не найден в корне проекта"; \
 	fi
@@ -43,6 +45,23 @@ ifeq ($(ENV),prod)
 	@$(MAKE) -C $(BACKEND_DIR) down-server-prod
 else
 	@echo "Предупреждение: down-server поддерживается только для prod окружения"
+endif
+
+# ===== Телеграм бот =====
+run-bot: check-env
+ifeq ($(ENV),dev)
+	@$(MAKE) -C $(TGBOT_DIR) run-bot-dev
+else ifeq ($(ENV),prod)
+	@$(MAKE) -C $(TGBOT_DIR) run-bot-prod
+else
+	$(error Недопустимое значение ENV: $(ENV). Используйте dev или prod)
+endif
+
+down-bot: check-env
+ifeq ($(ENV),prod)
+	@$(MAKE) -C $(TGBOT_DIR) down-bot-prod
+else
+	@echo "Предупреждение: down-bot поддерживается только для prod окружения"
 endif
 
 # ===== Фронтенд (entry) =====

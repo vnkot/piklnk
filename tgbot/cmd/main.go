@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -12,22 +13,25 @@ import (
 	"github.com/vnkot/piklnk/pkg/middleware"
 )
 
-var CommandRouter = map[string]func(bot *tgbotapi.BotAPI, update *tgbotapi.Update){
-	"start":  start.CommandHandler,
-	"help":   help.CommandHandler,
-	"create": create.CommandHandler,
-}
-
 func main() {
-	conf := config.NewConfig()
+	conf := config.LoadConfig()
 
 	bot, err := tgbotapi.NewBotAPI(conf.Token)
 	if err != nil {
 		log.Panicf("Ошибка инициализации бота: %v", err)
 	}
 
-	bot.Debug = true
+	var CommandRouter = map[string]func(bot *tgbotapi.BotAPI, update *tgbotapi.Update){
+		"start": start.CommandHandler,
+		"help":  help.CommandHandler,
+		"create": func(bot *tgbotapi.BotAPI, update *tgbotapi.Update) {
+			create.CommandHandler(bot, update, conf)
+		},
+	}
+
+	bot.Debug = conf.Debug
 	log.Printf("Авторизован как %s", bot.Self.UserName)
+	fmt.Println(conf.Debug)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60

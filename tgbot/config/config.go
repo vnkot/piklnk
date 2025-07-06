@@ -8,16 +8,22 @@ import (
 )
 
 type Config struct {
-	Token string
+	Token  string
+	APIUrl string
+	Debug  bool
 }
 
-func NewConfig() *Config {
+func LoadConfig() *Config {
 	err := godotenv.Load()
 	if err != nil {
-		panic(fmt.Sprintf("Error loading .env file: %v", err.Error()))
+		fmt.Printf("Error loading .env file: %v", err.Error())
 	}
 
+	isProd := os.Getenv("DEBUG") == "false"
+
 	return &Config{
-		Token: os.Getenv("TGBOTTOKEN"),
+		Token:  os.Getenv("TGBOTTOKEN"),
+		APIUrl: os.Getenv("APIURL"),
+		Debug:  !isProd,
 	}
 }

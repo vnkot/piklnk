@@ -31,10 +31,13 @@ jobs:
 
             echo "SECRET= ${{ secrets.BACKEND_SECRET }}" > .env
             echo "DSN= ${{ secrets.BACKEND_DSN }}" >> .env
+            echo "APIURL= ${{ secrets.API_URL }}" >> .env
+            echo "TGBOTTOKEN= ${{ secrets.TG_BOT_TOKEN }}" >> .env
 
             make init-env
             make db-migrate
 
             ENV=prod make run-server
+            ENV=prod make run-bot
             ENV=prod make run-entry
             make run-proxy
