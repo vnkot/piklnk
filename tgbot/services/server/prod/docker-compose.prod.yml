@@ -1,10 +1,8 @@
 services:
-  api:
+  bot:
     build:
       context: ../../../
       dockerfile: services/server/prod/Dockerfile.prod
-    ports:
-      - "8000:8000"
     env_file:
       - ../../../../.env
     restart: unless-stopped

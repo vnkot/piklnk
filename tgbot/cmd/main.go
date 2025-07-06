@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -31,7 +30,6 @@ func main() {
 
 	bot.Debug = conf.Debug
 	log.Printf("Авторизован как %s", bot.Self.UserName)
-	fmt.Println(conf.Debug)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
