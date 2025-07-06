@@ -4,6 +4,10 @@
   <img src="./.assets/banner.png" width="600" alt="PIKLNK Banner"/>
 </p>
 
+*Сайт* - [piklnk](https://piklnk.ru)
+*Бот* - [@piklnk_bot](https://t.me/piklnk_bot)
+
+
 ## Структура проекта
 - backend: go rest-api сервер, реализующий основную логику сервиса
 - tgbot: телеграм бот для работы с сервисом
